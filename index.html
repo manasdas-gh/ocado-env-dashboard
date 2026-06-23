@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oracle Fusion — Environment Dashboard · Ocado</title>
+<style>
+  :root {
+    --c-bg: #F8F7F4;
+    --c-surface: #FFFFFF;
+    --c-border: rgba(0,0,0,0.08);
+    --c-border-strong: rgba(0,0,0,0.15);
+    --c-text-primary: #1A1A18;
+    --c-text-secondary: #5C5C58;
+    --c-text-tertiary: #9A9A94;
+    --c-purple-bg: #EEEDFE;
+    --c-purple-text: #3C3489;
+    --c-teal-bg: #E1F5EE;
+    --c-teal-text: #0F6E56;
+    --c-coral-bg: #FAECE7;
+    --c-coral-text: #993C1D;
+    --c-pink-bg: #FBEAF0;
+    --c-pink-text: #993556;
+    --c-amber-bg: #FAEEDA;
+    --c-amber-text: #854F0B;
+    --c-green-bg: #EAF3DE;
+    --c-green-text: #3B6D11;
+    --c-blue-bg: #E6F1FB;
+    --c-blue-text: #185FA5;
+    --c-gray-bg: #F1EFE8;
+    --c-gray-text: #5F5E5A;
+    --c-ocado-purple: #5B21B6;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --font: -apple-system, 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'SF Mono', 'Cascadia Code', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--c-bg); font-family: var(--font); color: var(--c-text-primary); font-size: 15px; line-height: 1.6; }
+
+  /* Header */
+  .header { background: var(--c-surface); border-bottom: 0.5px solid var(--c-border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .logo-mark { width: 32px; height: 32px; background: var(--c-ocado-purple); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; }
+  .logo-mark svg { width: 18px; height: 18px; fill: white; }
+  .header-title { font-size: 15px; font-weight: 600; color: var(--c-text-primary); letter-spacing: -0.01em; }
+  .header-sub { font-size: 13px; color: var(--c-text-tertiary); margin-left: 2px; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .admin-badge { font-size: 12px; background: var(--c-purple-bg); color: var(--c-purple-text); padding: 3px 10px; border-radius: 20px; font-weight: 500; }
+  .last-updated { font-size: 12px; color: var(--c-text-tertiary); }
+
+  /* Layout */
+  .main { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  /* Quarter hero */
+  .quarter-hero { background: var(--c-surface); border: 0.5px solid var(--c-border); border-radius: var(--radius-lg); padding: 1.5rem 2rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .qh-left {}
+  .qh-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--c-text-tertiary); margin-bottom: 4px; }
+  .qh-title { font-size: 28px; font-weight: 700; letter-spacing: -0.03em; color: var(--c-text-primary); }
+  .qh-sub { font-size: 14px; color: var(--c-text-secondary); margin-top: 2px; }
+  .qh-right { display: flex; gap: 10px; flex-wrap: wrap; }
+  .next-chip { background: var(--c-bg); border: 0.5px solid var(--c-border-strong); border-radius: var(--radius-md); padding: .625rem 1rem; text-align: center; min-width: 130px; }
+  .nc-label { font-size: 11px; color: var(--c-text-tertiary); margin-bottom: 3px; }
+  .nc-val { font-size: 15px; font-weight: 600; color: var(--c-text-primary); }
+  .nc-date { font-size: 11px; color: var(--c-text-secondary); margin-top: 2px; }
+
+  /* Stats */
+  .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+  .stat { background: var(--c-surface); border: 0.5px solid var(--c-border); border-radius: var(--radius-md); padding: 1rem 1.25rem; }
+  .stat-label { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--c-text-tertiary); margin-bottom: 6px; }
+  .stat-value { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; color: var(--c-text-primary); }
+  .stat-sub { font-size: 12px; color: var(--c-text-tertiary); margin-top: 3px; }
+
+  /* Section heading */
+  .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; margin-top: 1.75rem; }
+  .section-title { font-size: 12px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--c-text-tertiary); }
+
+  /* Upcoming */
+  .upcoming-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+  .upcoming-card { background: var(--c-surface); border: 0.5px solid var(--c-border); border-radius: var(--radius-lg); padding: 1rem 1.25rem; }
+  .uc-type { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 20px; margin-bottom: 10px; }
+  .uc-title { font-size: 14px; font-weight: 600; color: var(--c-text-primary); margin-bottom: 4px; }
+  .uc-date { font-size: 13px; color: var(--c-text-secondary); display: flex; align-items: center; gap: 5px; }
+  .uc-note { font-size: 11px; color: var(--c-text-tertiary); margin-top: 5px; }
+
+  /* Env grid */
+  .env-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(195px, 1fr)); gap: 10px; }
+  .env-card { background: var(--c-surface); border: 0.5px solid var(--c-border); border-radius: var(--radius-lg); padding: 1rem 1.1rem; }
+  .ec-name { font-size: 14px; font-weight: 600; color: var(--c-text-primary); margin-bottom: 2px; }
+  .ec-type { font-size: 11px; color: var(--c-text-tertiary); margin-bottom: 8px; }
+  .ec-date { font-size: 12px; color: var(--c-text-secondary); margin-bottom: 6px; }
+  .ec-note { font-size: 11px; color: var(--c-text-tertiary); margin-top: 4px; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 20px; }
+  .b-complete { background: var(--c-green-bg); color: var(--c-green-text); }
+  .b-scheduled { background: var(--c-blue-bg); color: var(--c-blue-text); }
+  .b-cancelled { background: var(--c-gray-bg); color: var(--c-gray-text); }
+  .b-upcoming { background: var(--c-amber-bg); color: var(--c-amber-text); }
+  .b-p2t { background: var(--c-purple-bg); color: var(--c-purple-text); }
+  .b-t2t { background: var(--c-teal-bg); color: var(--c-teal-text); }
+  .b-qtr { background: var(--c-coral-bg); color: var(--c-coral-text); }
+
+  /* Calendar card */
+  .cal-card { background: var(--c-surface); border: 0.5px solid var(--c-border); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; }
+  .tabs { display: flex; gap: 4px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .tab { font-size: 13px; padding: 5px 16px; border: 0.5px solid var(--c-border-strong); border-radius: 20px; cursor: pointer; background: transparent; color: var(--c-text-secondary); font-family: var(--font); transition: background .15s, color .15s; }
+  .tab:hover { background: var(--c-bg); }
+  .tab.active { background: var(--c-text-primary); color: white; border-color: var(--c-text-primary); font-weight: 500; }
+  .tl-table { width: 100%; border-collapse: collapse; }
+  .tl-table tr { border-bottom: 0.5px solid var(--c-border); }
+  .tl-table tr:last-child { border-bottom: none; }
+  .tl-month { font-size: 12px; font-weight: 600; color: var(--c-text-secondary); padding: 10px 16px 10px 0; white-space: nowrap; vertical-align: top; width: 100px; }
+  .tl-events { padding: 10px 0; vertical-align: top; }
+  .tl-pills { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+  .tl-pill { font-size: 12px; padding: 3px 10px; border-radius: 20px; font-weight: 500; }
+  .pill-p2t { background: var(--c-purple-bg); color: var(--c-purple-text); }
+  .pill-t2t { background: var(--c-teal-bg); color: var(--c-teal-text); }
+  .pill-qtr { background: var(--c-coral-bg); color: var(--c-coral-text); }
+  .tl-status { padding: 10px 0 10px 12px; vertical-align: top; white-space: nowrap; }
+
+  /* Legend */
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .leg { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--c-text-secondary); }
+  .leg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Admin guide */
+  .admin-guide { background: var(--c-surface); border: 0.5px solid var(--c-border); border-left: 3px solid var(--c-ocado-purple); border-radius: 0 var(--radius-md) var(--radius-md) 0; padding: 1rem 1.25rem; margin-top: 1.75rem; }
+  .ag-title { font-size: 13px; font-weight: 600; color: var(--c-text-primary); margin-bottom: 6px; }
+  .ag-body { font-size: 13px; color: var(--c-text-secondary); line-height: 1.7; }
+  .ag-body code { font-family: var(--font-mono); font-size: 12px; background: var(--c-bg); padding: 1px 5px; border-radius: 4px; color: var(--c-ocado-purple); }
+
+  /* Footer */
+  .footer { text-align: center; font-size: 12px; color: var(--c-text-tertiary); margin-top: 3rem; padding-top: 1.5rem; border-top: 0.5px solid var(--c-border); }
+
+  @media (max-width: 600px) {
+    .header { padding: 0 1rem; }
+    .main { padding: 1rem 1rem 3rem; }
+    .quarter-hero { padding: 1.25rem; }
+    .qh-title { font-size: 22px; }
+    .tl-month { width: 70px; font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <div class="logo-mark">
+      <svg viewBox="0 0 18 18"><circle cx="9" cy="9" r="7" fill="none" stroke="white" stroke-width="1.5"/><path d="M6 9l2 2 4-4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div>
+      <div class="header-title">Oracle Fusion — Environment Dashboard</div>
+      <div class="header-sub">Ocado Technology · Business Applications</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="admin-badge">Admin: Manas</span>
+    <span class="last-updated" id="lastUpdated"></span>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- Quarter hero -->
+  <div class="quarter-hero">
+    <div class="qh-left">
+      <div class="qh-eyebrow">Current release</div>
+      <div class="qh-title">Oracle Fusion 26B</div>
+      <div class="qh-sub">June 2026 quarterly update — all environments patched</div>
+    </div>
+    <div class="qh-right">
+      <div class="next-chip">
+        <div class="nc-label">Next P2T</div>
+        <div class="nc-val">3 Jul 2026</div>
+        <div class="nc-date">Prod Support</div>
+      </div>
+      <div class="next-chip">
+        <div class="nc-label">Next T2T</div>
+        <div class="nc-val">6 Jul 2026</div>
+        <div class="nc-date">Dev3, Dev5</div>
+      </div>
+      <div class="next-chip">
+        <div class="nc-label">Next quarterly</div>
+        <div class="nc-val">Sep 2026</div>
+        <div class="nc-date">Release 26C</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stat-row" id="statRow"></div>
+
+  <!-- Upcoming -->
+  <div class="section-head">
+    <span class="section-title">Upcoming events</span>
+  </div>
+  <div class="upcoming-grid" id="upcomingGrid"></div>
+
+  <!-- Current env status -->
+  <div class="section-head" style="margin-top:1.75rem">
+    <span class="section-title">Environment status — Jun 2026 refresh</span>
+    <div class="legend">
+      <div class="leg"><div class="leg-dot" style="background:#639922"></div>Complete</div>
+      <div class="leg"><div class="leg-dot" style="background:#378ADD"></div>Scheduled</div>
+      <div class="leg"><div class="leg-dot" style="background:#888780"></div>Cancelled</div>
+      <div class="leg"><div class="leg-dot" style="background:#BA7517"></div>Upcoming</div>
+    </div>
+  </div>
+  <div class="env-grid" id="envGrid"></div>
+
+  <!-- Calendar -->
+  <div class="section-head">
+    <span class="section-title">2026 refresh calendar</span>
+  </div>
+  <div class="cal-card">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab(this,'p2t')">P2T refreshes</button>
+      <button class="tab" onclick="switchTab(this,'t2t')">T2T refreshes</button>
+      <button class="tab" onclick="switchTab(this,'qtr')">Quarterly patches</button>
+    </div>
+    <table class="tl-table" id="calTable"></table>
+  </div>
+
+  <!-- Admin guide -->
+  <div class="admin-guide">
+    <div class="ag-title">How to update this dashboard</div>
+    <div class="ag-body">
+      Open the HTML file in any text editor and find the <code>/* ===== DATA ===== */</code> section near the top of the script. Update the date strings and status values (<code>complete</code>, <code>scheduled</code>, <code>upcoming</code>, <code>cancelled</code>) as refreshes happen. Save the file and push to GitHub — the page updates instantly. No other code changes needed.
+    </div>
+  </div>
+
+</main>
+
+<footer class="footer">
+  Oracle Fusion Environment Dashboard · Ocado Technology · Maintained by Manas
+</footer>
+
+<script>
+/* ===== DATA — edit this section to keep the dashboard current ===== */
+
+const META = {
+  currentRelease: "26B",
+  lastUpdated: "23 Jun 2026",
+  admin: "Manas"
+};
+
+const STATS = [
+  { label: "Current release", value: "26B", sub: "Jun 2026" },
+  { label: "Total environments", value: "7", sub: "Fusion + Ocado4" },
+  { label: "T2T environments", value: "5", sub: "Dev1 – Dev5" },
+  { label: "Monthly P2T", value: "2", sub: "Prod Support + Ocado4" },
+  { label: "Next quarterly", value: "26C", sub: "Sep 2026" },
+];
+
+const UPCOMING = [
+  { type: "p2t", typeLabel: "P2T refresh", title: "Prod Support → Test", date: "3 Jul 2026", note: "" },
+  { type: "p2t", typeLabel: "P2T refresh", title: "Ocado4 (Workday)", date: "4 Jul 2026", note: "" },
+  { type: "t2t", typeLabel: "T2T refresh", title: "Dev3, Dev5", date: "6 Jul 2026", note: "Dev1/2/4 on quarterly cycle" },
+  { type: "qtr", typeLabel: "Quarterly update", title: "Release 26C — all envs", date: "Sep 2026", note: "Mandatory refresh before 26C" },
+];
+
+const ENVS = [
+  { name: "Prod Support (Test)", type: "P2T", date: "29 May 2026", status: "complete", note: "" },
+  { name: "Ocado4 (Workday)", type: "P2T", date: "8 Jun 2026", status: "scheduled", note: "" },
+  { name: "Dev1", type: "T2T", date: "31 May 2026", status: "complete", note: "Mandatory refresh 26B" },
+  { name: "Dev2", type: "T2T", date: "31 May 2026", status: "complete", note: "" },
+  { name: "Dev3", type: "T2T", date: "31 May 2026", status: "complete", note: "" },
+  { name: "Dev4", type: "T2T", date: "31 May 2026", status: "complete", note: "" },
+  { name: "Dev5", type: "T2T", date: "31 May 2026", status: "complete", note: "" },
+];
+
+const CALENDAR = {
+  p2t: [
+    { month: "Jan '26", events: ["Prod Support — 2 Jan", "Ocado4 — 2 Jan"], status: "complete" },
+    { month: "Feb '26", events: ["Prod Support — 1 Feb", "Ocado4 — cancelled"], status: "complete" },
+    { month: "Mar '26", events: ["Prod Support — 26 Feb", "Ocado4 — 1 Mar"], status: "complete" },
+    { month: "Apr '26", events: ["Prod Support — 1 Apr"], status: "complete" },
+    { month: "May '26", events: ["Prod Support — 1 May"], status: "complete" },
+    { month: "Jun '26", events: ["Prod Support — 29 May", "Ocado4 — 8 Jun"], status: "complete" },
+    { month: "Jul '26", events: ["Prod Support — 3 Jul", "Ocado4 — 4 Jul"], status: "upcoming" },
+    { month: "Aug '26", events: ["Prod Support — 1 Aug", "Ocado4 — 2 Aug"], status: "upcoming" },
+    { month: "Sep '26", events: ["Prod Support — TBC", "Ocado4 — 6 Sep"], status: "upcoming" },
+    { month: "Oct '26", events: ["Prod Support — TBC"], status: "upcoming" },
+    { month: "Nov '26", events: ["Prod Support — TBC"], status: "upcoming" },
+    { month: "Dec '26", events: ["Prod Support — TBC"], status: "upcoming" },
+  ],
+  t2t: [
+    { month: "Jan '26", events: ["Dev1 — 7 Jan", "Dev3 — 6 Jan", "Dev5 — 6 Jan", "Dev2/4 — quarterly cycle"], status: "complete" },
+    { month: "Feb '26", events: ["Dev1 — cancelled", "Dev3 — 5 Feb", "Dev5 — 4 Feb", "Dev2/4 — quarterly cycle"], status: "complete" },
+    { month: "Mar '26", events: ["All Dev1–5 — 1 Mar (mandatory 26A)"], status: "complete" },
+    { month: "Apr '26", events: ["Dev3 — 6 Apr", "Dev5 — 6 Apr", "Dev1/2/4 — quarterly cycle"], status: "complete" },
+    { month: "May '26", events: ["Dev3 — 5 May", "Dev5 — 5 May", "Dev1/2/4 — quarterly cycle"], status: "complete" },
+    { month: "Jun '26", events: ["All Dev1–5 — 31 May (mandatory 26B)"], status: "complete" },
+    { month: "Jul '26", events: ["Dev3 — 6 Jul", "Dev5 — 6 Jul", "Dev1/2/4 — quarterly cycle"], status: "upcoming" },
+    { month: "Aug '26", events: ["Dev3 — 3 Aug", "Dev5 — 3 Aug", "Dev1/2/4 — quarterly cycle"], status: "upcoming" },
+    { month: "Sep '26", events: ["All Dev1–5 — TBC (mandatory 26C)"], status: "upcoming" },
+    { month: "Oct '26", events: ["Dev3/Dev5 — TBC", "Dev1/2/4 — quarterly cycle"], status: "upcoming" },
+    { month: "Nov '26", events: ["Dev3/Dev5 — TBC", "Dev1/2/4 — quarterly cycle"], status: "upcoming" },
+    { month: "Dec '26", events: ["All Dev1–5 — TBC (mandatory 26D)"], status: "upcoming" },
+  ],
+  qtr: [
+    { month: "Mar '26 (26A)", events: ["All dev envs — 3 Mar 9pm GMT → 4 Mar 7am GMT", "Prod — 17 Mar 9pm GMT → 18 Mar 4am GMT", "Regression checks completed 1 Mar"], status: "complete" },
+    { month: "Jun '26 (26B)", events: ["All dev envs — 2 Jun 9pm GMT → 3 Jun 4am GMT", "Prod — 16 Jun 9pm GMT → 17 Jun 4am GMT"], status: "scheduled" },
+    { month: "Sep '26 (26C)", events: ["All dev envs — 1 Sep 9pm GMT → 2 Sep 4am GMT", "Prod — 15 Sep 9pm GMT → 16 Sep 4am GMT"], status: "upcoming" },
+    { month: "Dec '26 (26D)", events: ["All dev envs — 5 Dec 9pm GMT → 6 Dec 4am GMT", "Prod — 18 Dec 9pm GMT → 19 Dec 4am GMT"], status: "upcoming" },
+  ]
+};
+
+/* ===== END DATA ===== */
+
+const STATUS_BADGE = {
+  complete:  { cls: "b-complete",  label: "Complete" },
+  scheduled: { cls: "b-scheduled", label: "Scheduled" },
+  cancelled: { cls: "b-cancelled", label: "Cancelled" },
+  upcoming:  { cls: "b-upcoming",  label: "Upcoming" },
+};
+const TYPE_BADGE = {
+  p2t: { cls: "b-p2t", label: "P2T" },
+  t2t: { cls: "b-t2t", label: "T2T" },
+  qtr: { cls: "b-qtr", label: "Quarterly" },
+};
+
+function badge(cls, label) {
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+// Last updated
+document.getElementById('lastUpdated').textContent = 'Updated ' + META.lastUpdated;
+
+// Stats
+document.getElementById('statRow').innerHTML = STATS.map(s => `
+  <div class="stat">
+    <div class="stat-label">${s.label}</div>
+    <div class="stat-value">${s.value}</div>
+    <div class="stat-sub">${s.sub}</div>
+  </div>
+`).join('');
+
+// Upcoming
+document.getElementById('upcomingGrid').innerHTML = UPCOMING.map(u => `
+  <div class="upcoming-card">
+    ${badge('badge ' + (u.type === 'p2t' ? 'b-p2t' : u.type === 't2t' ? 'b-t2t' : 'b-qtr'), u.typeLabel)}
+    <div class="uc-title">${u.title}</div>
+    <div class="uc-date">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style="flex-shrink:0"><rect x="2" y="3" width="12" height="11" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5 2v2M11 2v2M2 7h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      ${u.date}
+    </div>
+    ${u.note ? `<div class="uc-note">${u.note}</div>` : ''}
+  </div>
+`).join('');
+
+// Env grid
+document.getElementById('envGrid').innerHTML = ENVS.map(e => {
+  const sb = STATUS_BADGE[e.status];
+  const tb = TYPE_BADGE[e.type.toLowerCase()];
+  return `
+    <div class="env-card">
+      <div class="ec-name">${e.name}</div>
+      <div class="ec-type">${e.type} refresh</div>
+      <div class="ec-date">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style="vertical-align:-1px;margin-right:3px"><rect x="2" y="3" width="12" height="11" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5 2v2M11 2v2M2 7h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        ${e.date}
+      </div>
+      ${badge(sb.cls, sb.label)}
+      ${e.note ? `<div class="ec-note">${e.note}</div>` : ''}
+    </div>
+  `;
+}).join('');
+
+// Calendar
+let activeType = 'p2t';
+function renderCal(type) {
+  const data = CALENDAR[type];
+  const pillCls = type === 'p2t' ? 'pill-p2t' : type === 't2t' ? 'pill-t2t' : 'pill-qtr';
+  document.getElementById('calTable').innerHTML = data.map(row => {
+    const sb = STATUS_BADGE[row.status];
+    return `
+      <tr>
+        <td class="tl-month">${row.month}</td>
+        <td class="tl-events">
+          <div class="tl-pills">
+            ${row.events.map(e => `<span class="tl-pill ${pillCls}">${e}</span>`).join('')}
+          </div>
+        </td>
+        <td class="tl-status">${badge(sb.cls, sb.label)}</td>
+      </tr>
+    `;
+  }).join('');
+}
+function switchTab(btn, type) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderCal(type);
+}
+renderCal('p2t');
+</script>
+</body>
+</html>
